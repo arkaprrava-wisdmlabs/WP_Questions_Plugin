@@ -99,5 +99,26 @@ class Email_Subscription_Plugin_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/email-subscription-plugin-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
-
+	public function es_settings_init() {
+		register_setting( 'es', 'es_options' );
+	
+		add_settings_section(
+			'es_settings_section',
+			'', '',
+			'es'
+		);
+		add_settings_field(
+			'es_settings_field',
+			__( 'post links per updation', 'es' ),
+			array($this,'es_settings_field_callback'),
+			'es',
+			'es_settings_section',
+		);
+	}
+	public function es_settings_field_callback() {
+		$options = get_option( 'es_options' );
+		?>
+		<input type="number" name="es_options" id="es_options" placeholder="no. of latest post" value="<?php echo $options; ?>">
+		<?php
+	}
 }
