@@ -17,7 +17,7 @@
  * Plugin URI:        https://email-subcription.com
  * Description:       This is a plugin for sending latest posts to subscribers
  * Version:           1.0.0
- * Author:            Arkaprava
+ * Author:            Arkaprav
  * Author URI:        https://arkaprava.com
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt

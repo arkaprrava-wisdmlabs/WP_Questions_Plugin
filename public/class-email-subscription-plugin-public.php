@@ -99,5 +99,17 @@ class Email_Subscription_Plugin_Public {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/email-subscription-plugin-public.js', array( 'jquery' ), $this->version, false );
 
 	}
+	public function es_shortcode(){ 
+		ob_start();
+		?>
+		<form method="post" id="subscription_form" class="subscription">
+			<h1>Email Subscription</h1>
+			<input type="email" name="email" id="email" placeholder="Enter Your Email" />
+			<button type="submit" name="submit">Subscribe</button>
+		</form>
+		<?php
+		$html = ob_get_clean();
+		return $html;
+	}
 
 }
