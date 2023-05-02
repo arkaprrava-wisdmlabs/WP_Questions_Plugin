@@ -121,4 +121,34 @@ class Email_Subscription_Plugin_Admin {
 		<input type="number" name="es_options" id="es_options" placeholder="no. of latest post" value="<?php echo $options; ?>">
 		<?php
 	}
+	public function es_options_page() {
+		add_menu_page(
+			__('Email Subscription','es'),
+			'Email Subscription',
+			'manage_options',
+			'es',
+			array($this,'es_options_page_html')
+		);
+	}
+	public function es_options_page_html() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		if ( isset( $_GET['settings-updated'] ) ) {
+			add_settings_error( 'es_messages', 'es_message', __( 'Settings Saved', 'es' ), 'updated' );
+		}
+		settings_errors( 'es_messages' );
+		?>
+		<div class="wrap">
+			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<form action="options.php" method="post">
+				<?php
+				settings_fields( 'es' );
+				do_settings_sections( 'es' );
+				submit_button( 'Save Settings' );
+				?>
+			</form>
+		</div>
+		<?php
+	}
 }
