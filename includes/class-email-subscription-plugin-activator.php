@@ -37,6 +37,7 @@ class Email_Subscription_Plugin_Activator {
 			email varchar(50) NOT NULL UNIQUE,
 			PRIMARY KEY  (id)
 		)";
+		$wpdb->query($q);
 	}
 
 }

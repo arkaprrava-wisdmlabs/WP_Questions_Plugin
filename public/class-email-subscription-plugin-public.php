@@ -96,8 +96,10 @@ class Email_Subscription_Plugin_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/email-subscription-plugin-public.js', array( 'jquery' ), $this->version, false );
-
+		 wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/email-subscription-plugin-public.js', array( 'jquery' ), $this->version, false );
+		 wp_localize_script( $this->plugin_name, 'js_config', array(
+			 'ajax_url' => admin_url( 'admin-ajax.php' ),
+		 ) );
 	}
 	public function es_shortcode(){ 
 		ob_start();
@@ -111,5 +113,39 @@ class Email_Subscription_Plugin_Public {
 		$html = ob_get_clean();
 		return $html;
 	}
-
+	public function subscribe_ajax(){
+		$email = [];
+		$s = str_replace('email','1',$_POST['subscribe']);
+		wp_parse_str($s,$email);
+		if(is_email($email[1])){
+			$data = sanitize_email($email[1]);
+			global $wpdb, $table_prefix;
+			$table_name = $table_prefix."subscription_emails";
+			$q = $wpdb->prepare(
+				"SELECT ID FROM `$table_name` WHERE email = '%s';",
+				array($data)
+			);
+			$results = $wpdb->get_results($q);
+			if(empty($results)==1){
+				$q = $wpdb->prepare(
+					"INSERT INTO `$table_name` (`email`) VALUES ('%s');",
+					array($data)
+				);
+				$wpdb->query($q);
+				$to = $data;
+				$subject = 'Subscription Mail';
+				$message = 'You have successfully subscribed to our site';
+				$headers = '';
+				wp_mail($to,$subject,$message,$headers);
+				wp_send_json_success( 'Successfully Register', '200' );
+			}
+			else{
+				wp_send_json_error( 'Already Registered', '403' );
+			}
+		}
+		else{
+			wp_send_json_error( 'Invalid Email', '403' );
+		}
+		wp_die();
+	}
 }
