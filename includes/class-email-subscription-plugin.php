@@ -158,7 +158,7 @@ class Email_Subscription_Plugin {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action('admin_init', $plugin_admin, 'es_settings_init');
 		$this->loader->add_action('admin_menu', $plugin_admin, 'es_options_page');
-
+		$this->loader->add_action('email_latest_posts_daily_to_subscribers', $plugin_admin, 'es_mail');
 	}
 
 	/**

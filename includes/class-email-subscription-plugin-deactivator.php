@@ -30,7 +30,8 @@ class Email_Subscription_Plugin_Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
-
+		$timestamp = wp_next_scheduled( 'email_latest_posts_daily_to_subscribers' );
+    	wp_unschedule_event( $timestamp, 'email_latest_posts_daily_to_subscribers' );
 	}
 
 }

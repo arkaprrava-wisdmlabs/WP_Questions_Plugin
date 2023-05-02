@@ -38,6 +38,9 @@ class Email_Subscription_Plugin_Activator {
 			PRIMARY KEY  (id)
 		)";
 		$wpdb->query($q);
+		if ( !wp_next_scheduled( 'email_latest_posts_daily_to_subscribers' ) ) {
+			wp_schedule_event( time(), 'daily', 'email_latest_posts_daily_to_subscribers' );
+		}
 	}
 
 }

@@ -151,4 +151,102 @@ class Email_Subscription_Plugin_Admin {
 		</div>
 		<?php
 	}
+	public function es_mail(){
+		$message = $this->es_data_loader();
+		$subject = 'Recent Post Notification';
+		$headers = '';
+		$to_list = $this->es_get_subscription_emails();
+		foreach($to_list as $to){
+			$content_type = function() { return 'text/html'; };
+			add_filter( 'wp_mail_content_type', $content_type );
+			wp_mail( $to, $subject, $message, $headers );
+			remove_filter( 'wp_mail_content_type', $content_type );
+		}
+	}
+	public function es_data_loader(){
+		$post_per_page = get_option( 'es_options' );
+		$news = array(
+			'post_type'=>'post',
+			'post_status'=>'publish',
+			'date_query'    => array(
+				'column'  => 'post_date',
+				'after'   => '- 1 days'
+			),
+			'posts_per_page' => $post_per_page
+		);
+		$data = array();
+		$query = new WP_query($news);
+		if($query->have_posts()){
+			while($query->have_posts()){
+				$query->the_post();
+				$title = '<strong>'.get_the_title().'</strong>';
+				$link = '<a href="'.get_the_permalink().'">'.get_the_permalink().'</a>' ;
+				$post = array(
+					'title' => $title,
+					'link' => $link
+				);
+				array_push($data, $post);
+			}
+			ob_start();
+			?>
+			<table id="elements">
+				<thead>
+					<th>News Title</th>
+					<th>link</th>
+				</thead>
+				<tbody>
+					<?php
+					foreach($data as $dat){
+						?>
+						<tr>
+							<td><?php echo $dat['title']; ?></td>
+							<td><?php echo $dat['link']; ?></td>
+						</tr>
+						<?php
+					}
+					?>
+				</tbody>
+			</table>
+			<style>
+				#elements {
+					border-collapse: collapse;
+					width: 900px;
+					margin: 20px 50px;
+				}
+				#elements th, #elements td {
+					border: 1px solid #ddd;
+					padding: 8px;
+					text-align: center;
+				}
+	
+				#elements tr:nth-child(even){background-color: #f3f3f3;}
+	
+				#elements tr:hover {background-color: #fafafa;}
+	
+				#elements th {
+					padding-top: 12px;
+					padding-bottom: 12px;
+					background-color: #ffffff;
+					color: #black;
+				}
+			</style>
+			<?php
+			$html = ob_get_clean();
+			return $html;
+		}
+		else{
+			return "<h1>no recent post<h1>";
+		}
+	}
+	public function es_get_subscription_emails(){
+		global $wpdb, $table_prefix;
+		$table_name = $table_prefix."subscription_emails";
+		$q = "SELECT email FROM `$table_name`;";
+		$results = $wpdb->get_results($q);
+		$mail = array();
+		foreach($results as $result){
+			array_push($mail,$result->email);
+		}
+		return $mail;
+	}
 }
