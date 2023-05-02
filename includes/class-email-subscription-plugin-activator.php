@@ -30,7 +30,13 @@ class Email_Subscription_Plugin_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-
+		global $wpdb, $table_prefix;
+		$table_name = $table_prefix.'subscription_emails';
+		$q = "CREATE TABLE IF NOT EXISTS `$table_name` (
+			id mediumint(9) NOT NULL AUTO_INCREMENT,
+			email varchar(50) NOT NULL UNIQUE,
+			PRIMARY KEY  (id)
+		)";
 	}
 
 }
